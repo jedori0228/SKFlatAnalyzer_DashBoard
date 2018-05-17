@@ -9,6 +9,7 @@ Now = datetime.datetime.now()
 NowStamp =  Now.strftime('%Y/%m/%d %H:%M:%S')
 
 os.system("ls -d */ | cut -f1 -d'/' > dirlist.txt")
+os.system('chmod 775 dirlist.txt')
 jobdirs = open('dirlist.txt').readlines()
 
 out = open('JobLogs.html','w')
@@ -26,6 +27,25 @@ print>>out,'''<!DOCTYPE html>
     font-family: monaco, Consolas, Lucida Console, monospace;
     text-align: center;
     color: #00cc66;
+  }
+  td.Monaco_TotalEvent{
+    font-family: monaco, Consolas, Lucida Console, monospace;
+    text-align: right;
+  }
+
+  @-webkit-keyframes blink
+  {
+    0%     { visibility: hidden }
+    50%    { visibility: hidden }
+    50.01% { visibility: visible }
+    100%   { visibility: visible }
+  }
+
+  td.Monaco_TotalEvent_Updating{
+    -webkit-animation: blink 0.5s infinite linear alternate;
+    font-family: monaco, Consolas, Lucida Console, monospace;
+    text-align: right;
+    color: red;
   }
   p.Clock{
     text-align: center;
@@ -90,13 +110,20 @@ print>>out,'''<!DOCTYPE html>
 
 <table border = 1 align="center">
   <tr>
-    <th><a name="LHE Log files">SKFlatAnalyzer Job Logs</a></th>
-    <th>Jot Status</th>
-    <th>Event Status</th>
-    <th>Run Time</th>
-    <th>Est. Time Left</th>
-    <th>Move?</th>
-    <th>Remove?</th>
+    <th rowspan="2"><a name="LHE Log files">SKFlatAnalyzer Job Logs</a></th>
+    <th colspan="3">Jot Status</th>
+    <th colspan="3">Event</th>
+    <th rowspan="2">Time</th>
+    <th rowspan="2">Move?</th>
+    <th rowspan="2">Remove?</th>
+  </tr>
+    <th>R</th>
+    <th>F</th>
+    <th>S</th>
+    <th>Total</th>
+    <th>Finished</th>
+    <th>%</th>
+  <tr>
   </tr>
 '''
 
@@ -117,20 +144,25 @@ for jobdir in jobdirs:
   loglines = open(jobdir+'/JobStatus.log').readlines()
   nlines = len(loglines)
 
+  n_totaljob = 0
   n_running = 0
   n_finished = 0
   event_done = 0
   event_total = 0
+  maxtimeconsume = 0
   line_EstTime=""
 
   nfound=0
   for i in range(0,nlines):
 
-    if nfound==5:
+    if nfound==7:
       break
 
     j = nlines-i-1
 
+    if "jobs submitted" in loglines[j]:
+      n_totaljob = int(loglines[j].replace(' jobs submitted',''))
+      nfound += 1
     if "jobs are running" in loglines[j]:
       n_running = int(loglines[j].replace(' jobs are running',''))
       nfound += 1
@@ -143,14 +175,14 @@ for jobdir in jobdirs:
     if "EventTotal" in loglines[j]:
       event_total = int(loglines[j].split()[2])
       nfound += 1
-    if "Estimted Finishing Time" in loglines[j]:
-      line_EstTime = loglines[j].replace('Estimted Finishing Time : ','')
+    if "Estimated Finishing Time" in loglines[j]:
+      line_EstTime = loglines[j].replace('Estimated Finishing Time : ','')
       nfound += 1
-
-  n_total = n_running+n_finished
+    if "MaxTimeLeft" in loglines[j]:
+      maxtimeconsume = float(loglines[j].split()[2])
 
   ## Determine font
-  IsAllDone = n_running==0
+  IsAllDone = n_finished==n_totaljob
   string_class = "Monaco_running"
   if IsAllDone:
     string_class = "Monaco_finished"
@@ -158,7 +190,12 @@ for jobdir in jobdirs:
   ## column : link to logfile
   out.write('    <td><a href="'+jobdir+'/JobStatus.log">'+jobdir+'</td>\n')
   ## column : Jot stats; e.g., 40/50
-  out.write('    <td class="'+string_class+'">'+str(n_finished)+'/'+str(n_total)+'</td>\n')
+  colored_running = '<font color=orange>'+str(n_running)+'</font>'
+  colored_finished = '<font color=green>'+str(n_finished)+'</font>'
+  colored_totaljob = '<font color=black>'+str(n_totaljob)+'</font>'
+  out.write('    <td align="center">'+colored_running+'</td>\n')
+  out.write('    <td align="center">'+colored_finished+'</td>\n')
+  out.write('    <td align="center">'+colored_totaljob+'</td>\n')
 
   ## make bar status
   bar_percentage = "["
@@ -179,8 +216,20 @@ for jobdir in jobdirs:
     str_percentage = "&nbsp;"+str_percentage
 
   ## column : Event status; e.g., [################----] 84.4 %
-  out.write('    <td class="'+string_class+'">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
+  #out.write('    <td class="'+string_class+'">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
 
+
+  ## column : total event
+  if n_running+n_finished is not n_totaljob:
+    out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_total,',d')+'</td>\n')
+    out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_done,',d')+'</td>\n')
+    out.write('    <td class="Monaco_TotalEvent_Updating">'+str_percentage+'</td>\n')
+    #out.write('    <td class="Monaco_TotalEvent_Updating">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
+  else:
+    out.write('    <td class="Monaco_TotalEvent">'+format(event_total,',d')+'</td>\n')
+    out.write('    <td class="Monaco_TotalEvent">'+format(event_done,',d')+'</td>\n')
+    out.write('    <td class="Monaco_TotalEvent">'+str_percentage+'</td>\n')
+    #out.write('    <td class="'+string_class+'">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
 
   ## calculate est time
   esttime_words = line_EstTime.split()
@@ -192,43 +241,20 @@ for jobdir in jobdirs:
   left_inseconds = 86400*LeftTime.days+LeftTime.seconds
 
   ## find total run time
-  line_StartTime = ""
+  line_TotalEventRunTime = ""
   for i in range(0,nlines):
-    if "Job submitted at" in loglines[i]:
-      line_StartTime = loglines[i].replace('Job submitted at ','')
+    if "TotalEventRunTime" in loglines[i]:
+      line_TotalEventRunTime = loglines[i].replace('TotalEventRunTime = ','')
       break
-  starttime_words = line_StartTime.split()
-  starttime_days = starttime_words[0].split('-')
-  starttime_times = starttime_words[1].split(':')
-  StartTime = datetime.datetime(int(starttime_days[0]),int(starttime_days[1]),int(starttime_days[2]),int(starttime_times[0]),int(starttime_times[1]),int(starttime_times[2]))
-
-  line_LastCheckTime = ""
-  for i in range(0,nlines):
-    if "Last checked at" in loglines[i]:
-      line_LastCheckTime = loglines[i].replace('Last checked at ','')
-      break
-  lastchecktime_words = line_LastCheckTime.split()
-  lastchecktime_days = lastchecktime_words[0].split('-')
-  lastchecktime_times = lastchecktime_words[1].split(':')
-  LastCheckTime = datetime.datetime(int(lastchecktime_days[0]),int(lastchecktime_days[1]),int(lastchecktime_days[2]),int(lastchecktime_times[0]),int(lastchecktime_times[1]),int(lastchecktime_times[2]))
-
-  TotalRunTime = LastCheckTime-StartTime
-  totalrun_days = TotalRunTime.days
-  totalrun_seconds = TotalRunTime.seconds
-  totalrun_hours = totalrun_seconds/3600
-  totalrun_minutes = (totalrun_seconds-3600*totalrun_hours)/60
-  totalrun_seconds = totalrun_seconds-3600*totalrun_hours-totalrun_minutes*60
-  totalrun_inseconds = 86400*TotalRunTime.days+TotalRunTime.seconds
-
-  ## column : total run time; e.g., *d *h *m *s
-  string_totalrun = str(totalrun_days)+'d'+str(totalrun_hours)+'h'+str(totalrun_minutes)+'m'+str(totalrun_seconds)+'s'
-  #out.write('    <td align="center">'+string_totalrun+'</td>\n')
-  out.write('    <td align="center">'+str(totalrun_inseconds)+' s</td>\n')
+  TotalEventRunTime=0
+  if line_TotalEventRunTime is not "":
+    TotalEventRunTime = int(line_TotalEventRunTime)
 
   ## column : est. time; e.g., 254 s
   if IsAllDone:
-    out.write('    <td align="center"></td>\n')
+    out.write('    <td align="center">'+str(TotalEventRunTime)+' (Job max consume = '+str(maxtimeconsume)+')</td>\n')
   else:
+    #out.write('    <td align="center">'+str(TotalEventRunTime)+' (Job max consume = '+str(round(maxtimeconsume,1))+')</td>\n')
     out.write('    <td align="center">'+str(left_inseconds)+' s</td>\n')
 
   ## column : ToMove checkbox
