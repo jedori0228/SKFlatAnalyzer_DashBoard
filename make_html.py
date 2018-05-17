@@ -31,6 +31,12 @@ print>>out,'''<!DOCTYPE html>
     text-align: center;
     font-size: 30px;
   }
+  img {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+  }
+
   </style>
 
 
@@ -38,8 +44,8 @@ print>>out,'''<!DOCTYPE html>
   <script type="text/javascript">
 
     function realtimeClock() {
-      document.getElementById('myclock').innerHTML = getTimeStamp()
-      setTimeout("realtimeClock()", 1000);
+      document.getElementById('myclock').innerHTML = 'Last updated at '+getTimeStamp()
+      //setTimeout("realtimeClock()", 1000);
     }
 
 
@@ -77,8 +83,9 @@ print>>out,'''<!DOCTYPE html>
 
 <p id="myclock" class="Clock"> <p>
 
-<form action="scripts/removedir.php" method="post">
+<form action="http://147.47.242.71/SKFlatAnalyzerJobLogs/scripts/removedir.php" method="post">
 
+<p align="center"> <input type="submit" name="Refresh" value="Refresh"> </p>
 <p align="center"> <input type="submit" name="SubmitChange" value="Change"> </p>
 
 <table border = 1 align="center">
@@ -187,8 +194,8 @@ for jobdir in jobdirs:
   ## find total run time
   line_StartTime = ""
   for i in range(0,nlines):
-    if "Job started at" in loglines[i]:
-      line_StartTime = loglines[i].replace('Job started at ','')
+    if "Job submitted at" in loglines[i]:
+      line_StartTime = loglines[i].replace('Job submitted at ','')
       break
   starttime_words = line_StartTime.split()
   starttime_days = starttime_words[0].split('-')
@@ -197,8 +204,8 @@ for jobdir in jobdirs:
 
   line_LastCheckTime = ""
   for i in range(0,nlines):
-    if "Last checket at" in loglines[i]:
-      line_LastCheckTime = loglines[i].replace('Last checket at ','')
+    if "Last checked at" in loglines[i]:
+      line_LastCheckTime = loglines[i].replace('Last checked at ','')
       break
   lastchecktime_words = line_LastCheckTime.split()
   lastchecktime_days = lastchecktime_words[0].split('-')
@@ -231,7 +238,15 @@ for jobdir in jobdirs:
 
   out.write('  </tr>\n')
 
-print>>out,'''</body>
+print>>out,'''</table>
+
+</form>
+
+<br />
+<br />
+<img src="http://147.47.242.71/Public/SKFlatAnalyzer_DashBoard/tangtang.gif" alt="WorkingVeryHard" align="middle">
+
+</body>
 
 </html>
 '''

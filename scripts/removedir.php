@@ -1,12 +1,18 @@
 <?php
 
+if(isset($_POST['Refresh'])){
+  echo "Refresh <br>";
+  shell_exec('cd /var/www/html/SKFlatAnalyzerJobLogs/; python make_html.py');
+  echo "Refresh done<br>";
+}
+
 if(isset($_POST['ToMove']) && is_array($_POST['ToMove'])){
   foreach ($_POST['ToMove'] as $dir) {
     shell_exec('mv /var/www/html/SKFlatAnalyzerJobLogs/' . $dir . ' /var/www/html/SKFlatAnalyzerJobLogs/Done/');
   };
 }
 else{
-  echo "Not Set<br>";
+  echo "ToMove Not Set <br>";
 }
 
 if(isset($_POST['ToRemove']) && is_array($_POST['ToRemove'])){
@@ -15,7 +21,7 @@ if(isset($_POST['ToRemove']) && is_array($_POST['ToRemove'])){
   };
 }
 else{
-  echo "Not Set<br>";
+  echo "ToRemove Not Set <br>";
 }
 
 $output=shell_exec('cd /var/www/html/SKFlatAnalyzerJobLogs/; python make_html.py');
