@@ -2,7 +2,7 @@ import os
 import datetime
 
 forbidden_dir = [
-"auth", "Done", "scripts", "backup"
+"auth", "Done", "scripts", "backup", "images"
 ]
 
 Now = datetime.datetime.now()
