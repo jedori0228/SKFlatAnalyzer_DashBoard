@@ -86,6 +86,7 @@ print>>out,'''<!DOCTYPE html>
     <th><a name="LHE Log files">SKFlatAnalyzer Job Logs</a></th>
     <th>Jot Status</th>
     <th>Event Status</th>
+    <th>Run Time</th>
     <th>Est. Time Left</th>
     <th>Move?</th>
     <th>Remove?</th>
@@ -113,7 +114,7 @@ for jobdir in jobdirs:
   n_finished = 0
   event_done = 0
   event_total = 0
-  EstTime=""
+  line_EstTime=""
 
   nfound=0
   for i in range(0,nlines):
@@ -136,7 +137,7 @@ for jobdir in jobdirs:
       event_total = int(loglines[j].split()[2])
       nfound += 1
     if "Estimted Finishing Time" in loglines[j]:
-      EstTime = loglines[j].replace('Estimted Finishing Time : ','')
+      line_EstTime = loglines[j].replace('Estimted Finishing Time : ','')
       nfound += 1
 
   n_total = n_running+n_finished
@@ -175,19 +176,47 @@ for jobdir in jobdirs:
 
 
   ## calculate est time
-  esttime_words = EstTime.split()
-  days = esttime_words[0].split('-')
-  times = esttime_words[1].split(':')
-  FinishingTime = datetime.datetime(int(days[0]),int(days[1]),int(days[2]),int(times[0]),int(times[1]),int(times[2]))
-  LeftTime = FinishingTime-Now
-
-  left_days = LeftTime.days
-  left_seconds = LeftTime.seconds
-  left_hours = left_seconds/3600
-  left_minutes = (left_seconds-3600*left_hours)/60
-  left_seconds = left_seconds-3600*left_hours-left_minutes*60
+  esttime_words = line_EstTime.split()
+  esttime_days = esttime_words[0].split('-')
+  esttime_times = esttime_words[1].split(':')
+  EstTime = datetime.datetime(int(esttime_days[0]),int(esttime_days[1]),int(esttime_days[2]),int(esttime_times[0]),int(esttime_times[1]),int(esttime_times[2]))
+  LeftTime = EstTime-Now
 
   left_inseconds = 86400*LeftTime.days+LeftTime.seconds
+
+  ## find total run time
+  line_StartTime = ""
+  for i in range(0,nlines):
+    if "Job started at" in loglines[i]:
+      line_StartTime = loglines[i].replace('Job started at ','')
+      break
+  starttime_words = line_StartTime.split()
+  starttime_days = starttime_words[0].split('-')
+  starttime_times = starttime_words[1].split(':')
+  StartTime = datetime.datetime(int(starttime_days[0]),int(starttime_days[1]),int(starttime_days[2]),int(starttime_times[0]),int(starttime_times[1]),int(starttime_times[2]))
+
+  line_LastCheckTime = ""
+  for i in range(0,nlines):
+    if "Last checket at" in loglines[i]:
+      line_LastCheckTime = loglines[i].replace('Last checket at ','')
+      break
+  lastchecktime_words = line_LastCheckTime.split()
+  lastchecktime_days = lastchecktime_words[0].split('-')
+  lastchecktime_times = lastchecktime_words[1].split(':')
+  LastCheckTime = datetime.datetime(int(lastchecktime_days[0]),int(lastchecktime_days[1]),int(lastchecktime_days[2]),int(lastchecktime_times[0]),int(lastchecktime_times[1]),int(lastchecktime_times[2]))
+
+  TotalRunTime = LastCheckTime-StartTime
+  totalrun_days = TotalRunTime.days
+  totalrun_seconds = TotalRunTime.seconds
+  totalrun_hours = totalrun_seconds/3600
+  totalrun_minutes = (totalrun_seconds-3600*totalrun_hours)/60
+  totalrun_seconds = totalrun_seconds-3600*totalrun_hours-totalrun_minutes*60
+  totalrun_inseconds = 86400*TotalRunTime.days+TotalRunTime.seconds
+
+  ## column : total run time; e.g., *d *h *m *s
+  string_totalrun = str(totalrun_days)+'d'+str(totalrun_hours)+'h'+str(totalrun_minutes)+'m'+str(totalrun_seconds)+'s'
+  #out.write('    <td align="center">'+string_totalrun+'</td>\n')
+  out.write('    <td align="center">'+str(totalrun_inseconds)+' s</td>\n')
 
   ## column : est. time; e.g., 254 s
   if IsAllDone:
