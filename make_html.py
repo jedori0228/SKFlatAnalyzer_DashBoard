@@ -108,10 +108,12 @@ print>>out,'''<!DOCTYPE html>
 
 <p id="myclock" class="Clock"> <p>
 
-<form action="http://147.47.242.71/SKFlatAnalyzerJobLogs/scripts/removedir.php" method="post">
+<form action="http://147.47.242.71/SKFlatAnalyzerJobLogs/scripts/Util.php" method="post">
 
-<p align="center"> <input type="submit" name="Refresh" value="Refresh"> </p>
-<p align="center"> <input type="submit" name="SubmitChange" value="Change"> </p>
+<p align="center">
+  <input type="submit" name="Refresh" value="Refresh"> 
+  <input type="submit" name="SubmitChange" value="Submit Change">
+</p>
 
 <table border = 1 align="center">
   <tr>
@@ -119,6 +121,7 @@ print>>out,'''<!DOCTYPE html>
     <th colspan="3">Jot Status</th>
     <th colspan="3">Event</th>
     <th rowspan="2">Time</th>
+    <th rowspan="2">Copy?</th>
     <th rowspan="2">Move?</th>
     <th rowspan="2">Remove?</th>
   </tr>
@@ -266,6 +269,8 @@ for jobdir in jobdirs:
   else:
     out.write('    <td align="center">'+str(left_inseconds)+' s</td>\n')
 
+  ## column : ToMove checkbox
+  out.write('    <td align="center"><input type="checkbox" name="ToCopy[]" value="'+jobdir+'"></td>\n')
   ## column : ToMove checkbox
   out.write('    <td align="center"><input type="checkbox" name="ToMove[]" value="'+jobdir+'"></td>\n')
   ## column : ToRemove checkbox
