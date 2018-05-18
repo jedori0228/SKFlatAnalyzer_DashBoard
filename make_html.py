@@ -47,6 +47,11 @@ print>>out,'''<!DOCTYPE html>
     text-align: right;
     color: red;
   }
+  td.Monaco_TotalEvent_AllDone{
+    font-family: monaco, Consolas, Lucida Console, monospace;
+    text-align: center;
+    color: green;
+  }
   p.Clock{
     text-align: center;
     font-size: 30px;
@@ -178,8 +183,8 @@ for jobdir in jobdirs:
     if "Estimated Finishing Time" in loglines[j]:
       line_EstTime = loglines[j].replace('Estimated Finishing Time : ','')
       nfound += 1
-    if "MaxTimeLeft" in loglines[j]:
-      maxtimeconsume = float(loglines[j].split()[2])
+    if "MaxEventRunTime" in loglines[j]:
+      maxtimeconsume = int(loglines[j].split()[2])
 
   ## Determine font
   IsAllDone = n_finished==n_totaljob
@@ -215,21 +220,26 @@ for jobdir in jobdirs:
   if number_percentage<10:
     str_percentage = "&nbsp;"+str_percentage
 
-  ## column : Event status; e.g., [################----] 84.4 %
+  ## x : Event status; e.g., [################----] 84.4 %
   #out.write('    <td class="'+string_class+'">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
 
 
   ## column : total event
-  if n_running+n_finished is not n_totaljob:
-    out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_total,',d')+'</td>\n')
-    out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_done,',d')+'</td>\n')
-    out.write('    <td class="Monaco_TotalEvent_Updating">'+str_percentage+'</td>\n')
-    #out.write('    <td class="Monaco_TotalEvent_Updating">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
+  if IsAllDone:
+    out.write('    <td colspan="2" class="Monaco_TotalEvent_AllDone">'+format(event_total,',d')+'</td>\n')
+    out.write('    <td class="Monaco_TotalEvent_AllDone">'+str_percentage+'</td>\n')
   else:
-    out.write('    <td class="Monaco_TotalEvent">'+format(event_total,',d')+'</td>\n')
-    out.write('    <td class="Monaco_TotalEvent">'+format(event_done,',d')+'</td>\n')
-    out.write('    <td class="Monaco_TotalEvent">'+str_percentage+'</td>\n')
-    #out.write('    <td class="'+string_class+'">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
+    ## All job started event, so event_total is correct
+    if n_running+n_finished is not n_totaljob:
+      out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_total,',d')+'</td>\n')
+      out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_done,',d')+'</td>\n')
+      out.write('    <td class="Monaco_TotalEvent_Updating">'+str_percentage+'</td>\n')
+      #out.write('    <td class="Monaco_TotalEvent_Updating">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
+    else:
+      out.write('    <td class="Monaco_TotalEvent">'+format(event_total,',d')+'</td>\n')
+      out.write('    <td class="Monaco_TotalEvent">'+format(event_done,',d')+'</td>\n')
+      out.write('    <td class="Monaco_TotalEvent">'+str_percentage+'</td>\n')
+      #out.write('    <td class="'+string_class+'">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
 
   ## calculate est time
   esttime_words = line_EstTime.split()
@@ -254,7 +264,6 @@ for jobdir in jobdirs:
   if IsAllDone:
     out.write('    <td align="center">'+str(TotalEventRunTime)+' (Job max consume = '+str(maxtimeconsume)+')</td>\n')
   else:
-    #out.write('    <td align="center">'+str(TotalEventRunTime)+' (Job max consume = '+str(round(maxtimeconsume,1))+')</td>\n')
     out.write('    <td align="center">'+str(left_inseconds)+' s</td>\n')
 
   ## column : ToMove checkbox
