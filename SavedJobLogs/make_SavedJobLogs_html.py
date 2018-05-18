@@ -18,7 +18,7 @@ print>>out,'''<!DOCTYPE html>
 <html>
 <head>
 
-  <title>Dashboard</title>
+  <title>SavedJobs</title>
 
   <style>
   p.Title{
@@ -75,7 +75,7 @@ print>>out,'''<!DOCTYPE html>
   <script type="text/javascript">
 
     function realtimeClock() {
-      document.getElementById('myclock').innerHTML = 'Current time : '+getTimeStamp()
+		  document.getElementById('myclock').innerHTML = 'Current time : '+getTimeStamp()
       setTimeout("realtimeClock()", 1000);
     }
 
@@ -116,14 +116,14 @@ print>>out,'''<!DOCTYPE html>
 </head>
 <body onload="SetClockAndTimeStamp()">
 
-<p class="Title"> Dashboard </p>
-<!--<p id="myclock" class="Clock"> </p>-->
-<p id="TimeStamp" class="Clock"> </p>
+<p class="Title"> Saved jobs </p>
+<!--<p id="myclock" class="Clock"> <p>-->
+<p id="TimeStamp" class="Clock"> <p>
 
-<form action="http://147.47.242.71/SKFlatAnalyzerJobLogs/scripts/Util.php" method="post">
+<form action="http://147.47.242.71/SKFlatAnalyzerJobLogs/scripts/UtilForSavedJobLogs.php" method="post">
 
 <p align="center">
-  <input type="submit" name="GoToSaved" value="Go to Saved"> 
+  <input type="submit" name="GoToRunning" value="Go to Dashboard">
   <input type="submit" name="Refresh" value="Refresh"> 
   <input type="submit" name="SubmitChange" value="Submit Change">
 </p>
@@ -134,8 +134,6 @@ print>>out,'''<!DOCTYPE html>
     <th colspan="3">Jot Status</th>
     <th colspan="3">Event</th>
     <th rowspan="2">Time</th>
-    <th rowspan="2">Copy?</th>
-    <th rowspan="2">Move?</th>
     <th rowspan="2">Remove?</th>
   </tr>
     <th>R</th>
@@ -282,10 +280,6 @@ for jobdir in jobdirs:
   else:
     out.write('    <td align="center">'+str(left_inseconds)+' s</td>\n')
 
-  ## column : ToMove checkbox
-  out.write('    <td align="center"><input type="checkbox" name="ToCopy[]" value="'+jobdir+'"></td>\n')
-  ## column : ToMove checkbox
-  out.write('    <td align="center"><input type="checkbox" name="ToMove[]" value="'+jobdir+'"></td>\n')
   ## column : ToRemove checkbox
   out.write('    <td align="center"><input type="checkbox" name="ToRemove[]" value="'+jobdir+'"></td>\n')
 

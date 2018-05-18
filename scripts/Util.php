@@ -1,5 +1,11 @@
 <?php
 
+if(isset($_POST['GoToSaved'])){
+  echo "GoToSaved <br>";
+  header('Location: http://147.47.242.71/SKFlatAnalyzerJobLogs/SavedJobLogs/JobLogs.html');
+  exit;
+}
+
 if(isset($_POST['ToCopy']) && is_array($_POST['ToCopy'])){
   foreach ($_POST['ToCopy'] as $dir) {
     shell_exec('cp -r /var/www/html/SKFlatAnalyzerJobLogs/' . $dir . ' /var/www/html/SKFlatAnalyzerJobLogs/SavedJobLogs/; chmod -R 775 /var/www/html/SKFlatAnalyzerJobLogs/SavedJobLogs/');
@@ -30,6 +36,5 @@ else{
   echo "ToRemove Not Set <br>";
 }
 
-$output=shell_exec('cd /var/www/html/SKFlatAnalyzerJobLogs/; python make_html.py');
-header('Location: http://147.47.242.71/SKFlatAnalyzerJobLogs/JobLogs.html')
+header('Location: http://147.47.242.71/SKFlatAnalyzerJobLogs/JobLogs.html');
 ?>
