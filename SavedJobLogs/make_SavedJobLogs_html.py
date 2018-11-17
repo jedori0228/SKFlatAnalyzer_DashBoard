@@ -131,7 +131,7 @@ print>>out,'''<!DOCTYPE html>
 <table border = 1 align="center">
   <tr>
     <th rowspan="2"><a name="LHE Log files">SKFlatAnalyzer Job Logs</a></th>
-    <th colspan="3">Jot Status</th>
+    <th colspan="3">Job Status</th>
     <th colspan="3">Event</th>
     <th rowspan="2">Time</th>
     <th rowspan="2">Remove?</th>
