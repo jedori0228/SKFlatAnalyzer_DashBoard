@@ -246,12 +246,14 @@ for jobdir in jobdirs:
     out.write('    <td class="Monaco_TotalEvent_AllDone">'+str_percentage+'</td>\n')
   else:
     ## All job started event, so event_total is correct
-    if n_running+n_finished is not n_totaljob:
+    if n_running+n_finished != n_totaljob:
+      print "--> Updadting"
       out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_total,',d')+'</td>\n')
       out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_done,',d')+'</td>\n')
       out.write('    <td class="Monaco_TotalEvent_Updating">'+str_percentage+'</td>\n')
       #out.write('    <td class="Monaco_TotalEvent_Updating">'+bar_percentage+'\t'+str_percentage+' %&nbsp;</td>\n')
     else:
+      print "--> Not updating"
       out.write('    <td class="Monaco_TotalEvent">'+format(event_total,',d')+'</td>\n')
       out.write('    <td class="Monaco_TotalEvent">'+format(event_done,',d')+'</td>\n')
       out.write('    <td class="Monaco_TotalEvent">'+str_percentage+'</td>\n')
