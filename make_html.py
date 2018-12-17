@@ -120,7 +120,7 @@ print>>out,'''<!DOCTYPE html>
 <!--<p id="myclock" class="Clock"> </p>-->
 <p id="TimeStamp" class="Clock"> </p>
 
-<form action="http://147.47.242.71/SKFlatAnalyzerJobLogs/scripts/Util.php" method="post">
+<form action="scripts/Util.php" method="post">
 
 <p align="center">
   <input type="submit" name="GoToSaved" value="Go to Saved"> 
