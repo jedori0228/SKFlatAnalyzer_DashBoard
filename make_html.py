@@ -2,7 +2,7 @@ import os
 import datetime
 
 forbidden_dir = [
-"auth", "SavedJobLogs", "scripts", "backup", "images"
+"auth", "SavedJobLogs", "scripts", "backup", "etc"
 ]
 
 Now = datetime.datetime.now()
@@ -299,7 +299,7 @@ print>>out,'''</table>
 
 <br />
 <br />
-<img src="http://147.47.242.71/Public/SKFlatAnalyzer_DashBoard/tangtang.gif" alt="WorkingVeryHard" align="middle">
+<img src="etc/tangtang.gif" alt="WorkingVeryHard" align="middle">
 
 </body>
 
