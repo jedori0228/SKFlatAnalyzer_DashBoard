@@ -123,20 +123,24 @@ print>>out,'''<!DOCTYPE html>
 <form action="scripts/Util.php" method="post">
 
 <p align="center">
-  <input type="submit" name="GoToSaved" value="Go to Saved"> 
   <input type="submit" name="Refresh" value="Refresh"> 
-  <input type="submit" name="SubmitChange" value="Submit Change">
 </p>
 
 <table border = 1 align="center">
   <tr>
-    <th rowspan="2"><a name="LHE Log files">SKFlatAnalyzer Job Logs</a></th>
+    <th rowspan="2">Time</th>
+    <th rowspan="2">Analyzer</th>
+    <th rowspan="2">DataYear</th>
+    <th rowspan="2">Host</th>
+    <th rowspan="2">Sample</th>
+    <th rowspan="2">Flags</th>
+    <th rowspan="2">log</th>
     <th colspan="3">Job Status</th>
     <th colspan="3">Event</th>
     <th rowspan="2">Time</th>
-    <th rowspan="2">Copy?</th>
-    <th rowspan="2">Move?</th>
-    <th rowspan="2">Remove?</th>
+    <!-- <th rowspan="2">Copy?</th> -->
+    <!-- <th rowspan="2">Move?</th> -->
+    <!-- <th rowspan="2">Remove?</th> -->
   </tr>
     <th>R</th>
     <th>F</th>
@@ -208,8 +212,27 @@ for jobdir in jobdirs:
   if IsAllDone:
     string_class = "Monaco_finished"
 
+  ## parse jobdif
+  words_jobdir = jobdir.split('__')
+  this_Time = words_jobdir[0]
+  this_Analyzer = words_jobdir[1]
+  this_DataYear = words_jobdir[2].replace('Year','')
+  this_Sample = words_jobdir[-1]
+  this_Host = words_jobdir[-2]
+  AllFlags = words_jobdir[3:-2]
+  OneString_Flags = ","
+  for flag in AllFlags:
+    OneString_Flags += OneString_Flags+','
+  OneString_Flags = OneString_Flags[0:-1]
+
   ## column : link to logfile
-  out.write('    <td><a href="'+jobdir+'/JobStatus.log">'+jobdir+'</td>\n')
+  out.write('    <td align="center">'+this_Time+'</td>\n')
+  out.write('    <td>'+this_Analyzer+'</td>\n')
+  out.write('    <td align="center">'+this_DataYear+'</td>\n')
+  out.write('    <td align="center">'+this_Host+'</td>\n')
+  out.write('    <td>'+this_Sample+'</td>\n')
+  out.write('    <td>'+OneString_Flags+'</td>\n')
+  out.write('    <td><a href="'+jobdir+'/JobStatus.log">O</td>\n')
   ## column : Jot stats; e.g., 40/50
   colored_running = '<font color=orange>'+str(n_running)+'</font>'
   colored_finished = '<font color=green>'+str(n_finished)+'</font>'
@@ -285,11 +308,11 @@ for jobdir in jobdirs:
     out.write('    <td align="center">'+str(left_inseconds)+' s</td>\n')
 
   ## column : ToMove checkbox
-  out.write('    <td align="center"><input type="checkbox" name="ToCopy[]" value="'+jobdir+'"></td>\n')
+  #out.write('    <td align="center"><input type="checkbox" name="ToCopy[]" value="'+jobdir+'"></td>\n')
   ## column : ToMove checkbox
-  out.write('    <td align="center"><input type="checkbox" name="ToMove[]" value="'+jobdir+'"></td>\n')
+  #out.write('    <td align="center"><input type="checkbox" name="ToMove[]" value="'+jobdir+'"></td>\n')
   ## column : ToRemove checkbox
-  out.write('    <td align="center"><input type="checkbox" name="ToRemove[]" value="'+jobdir+'"></td>\n')
+  #out.write('    <td align="center"><input type="checkbox" name="ToRemove[]" value="'+jobdir+'"></td>\n')
 
   out.write('  </tr>\n')
 
