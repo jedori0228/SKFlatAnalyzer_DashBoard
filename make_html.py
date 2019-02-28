@@ -220,9 +220,9 @@ for jobdir in jobdirs:
   this_Sample = words_jobdir[-1]
   this_Host = words_jobdir[-2]
   AllFlags = words_jobdir[3:-2]
-  OneString_Flags = ","
+  OneString_Flags = ""
   for flag in AllFlags:
-    OneString_Flags += OneString_Flags+','
+    OneString_Flags += flag+','
   OneString_Flags = OneString_Flags[0:-1]
 
   ## column : link to logfile
