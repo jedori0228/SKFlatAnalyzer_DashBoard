@@ -129,6 +129,7 @@ print>>out,'''<!DOCTYPE html>
 <table border = 1 align="center">
   <tr>
     <th rowspan="2">Time</th>
+    <th rowspan="2">JobID</th>
     <th rowspan="2">Analyzer</th>
     <th rowspan="2">DataYear</th>
     <th rowspan="2">Host</th>
@@ -215,11 +216,12 @@ for jobdir in jobdirs:
   ## parse jobdif
   words_jobdir = jobdir.split('__')
   this_Time = words_jobdir[0]
-  this_Analyzer = words_jobdir[1]
-  this_DataYear = words_jobdir[2].replace('Year','')
+  this_JobID = words_jobdir[1]
+  this_Analyzer = words_jobdir[2]
+  this_DataYear = words_jobdir[3].replace('Year','')
   this_Sample = words_jobdir[-1]
   this_Host = words_jobdir[-2]
-  AllFlags = words_jobdir[3:-2]
+  AllFlags = words_jobdir[4:-2]
   OneString_Flags = ""
   for flag in AllFlags:
     OneString_Flags += flag+','
@@ -227,6 +229,7 @@ for jobdir in jobdirs:
 
   ## column : link to logfile
   out.write('    <td align="center">'+this_Time+'</td>\n')
+  out.write('    <td align="center">'+this_JobID+'</td>\n')
   out.write('    <td>'+this_Analyzer+'</td>\n')
   out.write('    <td align="center">'+this_DataYear+'</td>\n')
   out.write('    <td align="center">'+this_Host+'</td>\n')
