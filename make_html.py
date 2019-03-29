@@ -224,8 +224,8 @@ for jobdir in jobdirs:
   AllFlags = words_jobdir[4:-2]
   OneString_Flags = ""
   for flag in AllFlags:
-    OneString_Flags += flag+','
-  OneString_Flags = OneString_Flags[0:-1]
+    OneString_Flags += flag+', '
+  OneString_Flags = OneString_Flags[0:-2]
 
   ## column : link to logfile
   out.write('    <td align="center">'+this_Time+'</td>\n')
