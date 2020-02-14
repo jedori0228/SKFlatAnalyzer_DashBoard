@@ -134,6 +134,7 @@ print>>out,'''<!DOCTYPE html>
     <th rowspan="2">DataYear</th>
     <th rowspan="2">Host</th>
     <th rowspan="2">Sample</th>
+    <th rowspan="2">Xsec (pb)</th>
     <th rowspan="2">Flags</th>
     <th rowspan="2">log</th>
     <th colspan="3">Job Status</th>
@@ -173,6 +174,7 @@ for jobdir in jobdirs:
   n_totaljob = 0
   n_running = 0
   n_finished = 0
+  XSEC = "-1"
   event_done = 0
   event_total = 0
   maxtimeconsume = 0
@@ -194,6 +196,9 @@ for jobdir in jobdirs:
       nfound += 1
     if "jobs are finished" in loglines[j]:
       n_finished = int(loglines[j].replace(' jobs are finished',''))
+      nfound += 1
+    if "XSEC" in loglines[j]:
+      XSEC = loglines[j].split()[2]
       nfound += 1
     if "EventDone" in loglines[j]:
       event_done = int(loglines[j].split()[2])
@@ -234,6 +239,7 @@ for jobdir in jobdirs:
   out.write('    <td align="center">'+this_DataYear+'</td>\n')
   out.write('    <td align="center">'+this_Host+'</td>\n')
   out.write('    <td>'+this_Sample+'</td>\n')
+  out.write('    <td>'+XSEC+'</td>\n')
   out.write('    <td>'+OneString_Flags+'</td>\n')
   out.write('    <td><a href="'+jobdir+'/JobStatus.log">O</td>\n')
   ## column : Jot stats; e.g., 40/50
