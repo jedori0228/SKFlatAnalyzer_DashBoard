@@ -9,7 +9,7 @@ Now = datetime.datetime.now()
 NowStamp =  Now.strftime('%Y/%m/%d %H:%M:%S')
 
 os.system("ls -d */ | cut -f1 -d'/' > dirlist.txt")
-os.system('chmod 775 dirlist.txt')
+os.system('chmod o+w dirlist.txt')
 jobdirs = open('dirlist.txt').readlines()
 
 out = open('JobLogs.html','w')
