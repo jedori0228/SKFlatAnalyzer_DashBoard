@@ -279,7 +279,7 @@ for jobdir in jobdirs:
   else:
     ## All job started event, so event_total is correct
     if n_running+n_finished != n_totaljob:
-      print "--> Updadting"
+      print "--> Updating"
       out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_total,',d')+'</td>\n')
       out.write('    <td class="Monaco_TotalEvent_Updating">'+format(event_done,',d')+'</td>\n')
       out.write('    <td class="Monaco_TotalEvent_Updating">'+str_percentage+'</td>\n')
