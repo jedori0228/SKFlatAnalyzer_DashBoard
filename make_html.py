@@ -21,11 +21,23 @@ print>>out,'''<!DOCTYPE html>
   <title>Dashboard</title>
 
   <style>
+
+  @font-face{
+    font-family: Formula1Regular;
+    src: url('./fonts/Formula1-Regular.ttf') format('truetype');
+  }
+  @font-face{
+    font-family: Formula1Bold;
+    src: url('./fonts/Formula1-Bold.ttf') format('truetype');
+  }
+
   p.Title{
+    font-family: Formula1Bold;
     text-align: center;
-    font-size: 40px;
+    font-size: 60px;
   }
   p.Clock{
+    font-family: Formula1Regular;
     text-align: center;
     font-size: 30px;
   }
